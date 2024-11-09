@@ -57,6 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\19_Takano\bullet.cs" />
+    <Compile Include="Assets\30_Honda\Scripts\MovePlayer.cs" />
+    <Compile Include="Assets\30_Honda\Scripts\CreateGarbage.cs" />
+    <Compile Include="Assets\34_Yamanaka\Direction.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
