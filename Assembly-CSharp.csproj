@@ -56,17 +56,11 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< Updated upstream
+    <Compile Include="Assets\30_Honda\Scripts\MovePlayer.cs" />
     <Compile Include="Assets\19_Takano\bullet.cs" />
-    <Compile Include="Assets\30_Honda\Scripts\MovePlayer.cs" />
-    <Compile Include="Assets\30_Honda\Scripts\CreateGarbage.cs" />
-    <Compile Include="Assets\34_Yamanaka\Direction.cs" />
-=======
-    <Compile Include="Assets\30_Honda\Scripts\MovePlayer.cs" />
-    <Compile Include="Assets\30_Honda\Scripts\CreateGarbage.cs" />
     <Compile Include="Assets\34_Yamanaka\Enemy.cs" />
     <Compile Include="Assets\34_Yamanaka\Collision.cs" />
->>>>>>> Stashed changes
+    <Compile Include="Assets\30_Honda\Scripts\CreateGarbage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

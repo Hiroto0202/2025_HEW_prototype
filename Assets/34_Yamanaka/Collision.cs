@@ -14,7 +14,10 @@ public class Collision : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector2 vec = Enemy.m_position;
-        this.transform.position = vec;
+        Vector3 _vec = Enemy.m_position;
+        _vec.z = 0.01f;
+        this.transform.position = _vec;
     }
+
+    
 }
