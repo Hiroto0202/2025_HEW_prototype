@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CreateGarbage : MonoBehaviour
 {
-    public GameObject m_garbagePrefab;
+    public GameObject m_garbagePrefab = null;
     public float m_throwSpeed = 10.0f;
     KeyCode m_throwKey = KeyCode.Space;
 
