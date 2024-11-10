@@ -1,26 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public GameObject m_player = null;
     public GameObject m_enemyPrefab = null;
-    float m_elapsedTime = 0.0f; // 経過時間
-    bool m_counterFg = false;   // 時間計測フラグ
+    GameObject m_newEnemy = null;                           // 生成された敵
+    List<GameObject> m_enemyList = new List<GameObject>();  // 現在出現している敵のリスト
+    public int m_maxEnemyNum = 20;                          // 敵の最大出現数
 
+    float m_elapsedTime = 0.0f;     // 経過時間
+    bool m_counterFg = false;       // 時間計測フラグ
+    public TextMeshProUGUI m_timeText = null;
+
+    // 敵の出現範囲
+    [Tooltip("敵の出現範囲")]
+    public float m_enemyMinX = 0;
+    public float m_enemyMaxX = 0;
+    public float m_enemyMinY = 0;
+    public float m_enemyMaxY = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        // ----- 最初に最大数敵を配置する ----- //
+        for(int i = 0; i < m_maxEnemyNum; ++i)
+        {
+            m_newEnemy = Instantiate(m_enemyPrefab);
+            m_newEnemy.transform.position = GetRandomPosition();
+            m_enemyList.Add(m_newEnemy);    // リストに追加
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        // ----- 時間を計測する処理 ----- //
         // エンターキーが押された時、計測の切り替え
-        if(Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.Return))
         {
             m_counterFg = !m_counterFg; // 反対の値に変更
         }
@@ -32,16 +52,30 @@ public class GameManager : MonoBehaviour
             Debug.Log("計測中:" + (m_elapsedTime).ToString());
         }
 
-        if(m_elapsedTime % 100.0f == 0)
+        // 時間を表示
+        m_timeText.text = m_elapsedTime.ToString();
+
+
+        // ----- 削除フラグの立っている敵をフェードアウト後に消す ----- //
+
+
+
+        // ----- 敵をランダムな位置に作成する処理 ----- //
+        if (m_elapsedTime >= 5.0f && m_enemyList.Count < m_maxEnemyNum)
         {
-            CreateObject(m_enemyPrefab);
+            m_newEnemy = Instantiate(m_enemyPrefab);    
+            m_newEnemy.transform.position = GetRandomPosition();
+            m_elapsedTime = 0.0f;
         }
     }
 
-    // オブジェクトを生成する
-    private void CreateObject(GameObject _gameObject)
+    // ランダムな位置を生成する
+    private Vector2 GetRandomPosition()
     {
-        GameObject _newObject;
-        _newObject = Instantiate(_gameObject, this.transform.position, Quaternion.identity);
+        // 決められた範囲内で生成
+        float _x = Random.Range(m_enemyMinX, m_enemyMaxX);
+        float _y = Random.Range(m_enemyMinY, m_enemyMaxY);
+
+        return new Vector2(_x, _y); // 座標を返す
     }
 }
