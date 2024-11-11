@@ -337,14 +337,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4a9843ba3a450644ad3c86deec76c1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_maxEnemyNum: 5
   m_player: {fileID: 1691799348}
   m_enemyPrefab: {fileID: 1738858028}
-  m_maxEnemyNum: 10
   m_timeText: {fileID: 1978476422}
   m_enemyMinX: -8
   m_enemyMaxX: 8
-  m_enemyMinY: -5
-  m_enemyMaxY: 5
+  m_enemyMinY: -4
+  m_enemyMaxY: 4
 --- !u!4 &1518282456
 Transform:
   m_ObjectHideFlags: 0
@@ -568,6 +568,20 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2551316936914991998, guid: a0d30c982acfafa4fb7aa40b72b30dfe, type: 3}
   m_PrefabInstance: {fileID: 2551316938452477266}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1738858031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738858028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9398cb2f64755ea4cb72818bcf6dbb56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_deleteFg: 0
+  m_deleteTime: 10
 --- !u!1 &1978476420
 GameObject:
   m_ObjectHideFlags: 0
@@ -716,11 +730,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2551316936914991996, guid: a0d30c982acfafa4fb7aa40b72b30dfe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.69
+      value: 10.78
       objectReference: {fileID: 0}
     - target: {fileID: 2551316936914991996, guid: a0d30c982acfafa4fb7aa40b72b30dfe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.89
+      value: -1.37
       objectReference: {fileID: 0}
     - target: {fileID: 2551316936914991996, guid: a0d30c982acfafa4fb7aa40b72b30dfe, type: 3}
       propertyPath: m_LocalPosition.z
