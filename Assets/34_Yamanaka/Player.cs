@@ -5,13 +5,12 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     Rigidbody2D rb;
-    Vector3 m_moveForward;
+    Vector2 m_moveForward;
     public KeyCode W = KeyCode.W;
     public KeyCode A = KeyCode.A;
     public KeyCode S = KeyCode.S;
     public KeyCode D = KeyCode.D;
-    public float m_speed = 30.0f;
-
+    public float m_speed = 30.0f;    
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +21,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        m_moveForward = new Vector3(0.0f, 0.0f, 0.0f);
+        m_moveForward = new Vector2(0.0f, 0.0f);
 
         if (Input.GetKey(W))
         {
@@ -44,7 +43,7 @@ public class Player : MonoBehaviour
             m_moveForward.x = 1.0f;
         }
 
-        rb.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+        rb.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
 
     private void FixedUpdate()
