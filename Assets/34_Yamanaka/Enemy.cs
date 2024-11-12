@@ -17,6 +17,8 @@ public class Enemy : MonoBehaviour
 
     public float m_despawn = 5.0f;
 
+    float É∆ = 0.1f;
+
     GameObject obj;
 
     // Start is called before the first frame update
@@ -37,6 +39,7 @@ public class Enemy : MonoBehaviour
     {
         m_position = this.transform.position;
 
+        transform.Rotate(new Vector3(0, 0, É∆));
 
         obj.transform.position = m_position;
 
@@ -61,6 +64,8 @@ public class Enemy : MonoBehaviour
 
     void Discovery()
     {
+        
+
         GameObject _target = GameObject.Find("Player");
         
         Vector2 _pla=_target.transform.position;
