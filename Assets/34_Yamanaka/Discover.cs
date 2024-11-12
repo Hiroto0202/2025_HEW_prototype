@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Collision : MonoBehaviour
+public class Discover : MonoBehaviour
 {
     float m_startTime;
+
+    public static float m_targetflg = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -15,15 +17,16 @@ public class Collision : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Vector3 _vec = Enemy.m_position;
-        //_vec.z = 0.01f;
-        //this.transform.position = _vec;
 
-        if (m_startTime + 1 / 60 < Time.time)
-        {
-            Destroy(this.gameObject);
-        }
     }
 
-    
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.transform.tag == "Player")
+        {
+            m_targetflg = 1;
+        }
+
+    }
+
 }
