@@ -18,11 +18,12 @@ public class MoveEnemy : MonoBehaviour
     void Update()
     {
         m_elapsedTime += Time.deltaTime;
-        Debug.Log("“G‚ªoŒ»‚µ‚Ä‚©‚ç‚Ì•b”:" + (m_elapsedTime).ToString());
+        //Debug.Log("“G‚ªoŒ»‚µ‚Ä‚©‚ç‚Ì•b”:" + (m_elapsedTime).ToString());
 
         if(m_elapsedTime > m_deleteTime)
         {
             m_deleteFg = true;
+            //Debug.Log("“G‚ğíœ:" + (m_deleteFg).ToString());
             //m_elapsedTime = 0.0f;
         }
     }

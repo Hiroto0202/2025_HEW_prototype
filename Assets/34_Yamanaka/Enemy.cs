@@ -9,17 +9,20 @@ public class Enemy : MonoBehaviour
     Rigidbody2D m_rb;
     public Vector2 m_moveForward;
     public GameObject m_prefub;
-    public float m_speed = 20.0f;
+    public float m_speed = 0.5f;
 
     public Vector2 m_position;
 
     float m_startTime;
-
     public float m_despawn = 5.0f;
 
-    float É∆ = 0.1f;
 
-    GameObject obj;
+    GameObject m_obj;
+    GameObject m_target;
+
+    Transform m_playerTrans;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -29,9 +32,14 @@ public class Enemy : MonoBehaviour
         m_startTime = Time.time;
 
         Vector3 _spawnVec = new Vector3(this.transform.position.x, this.transform.position.y, 0.01f);
-        obj = Instantiate(m_prefub, _spawnVec, Quaternion.identity);
+        m_obj = Instantiate(m_prefub, _spawnVec, Quaternion.identity);
 
         m_moveForward.x = 1.0f;
+
+        m_target = GameObject.Find("Player");
+
+
+        m_playerTrans = m_target.transform;
     }
 
     // Update is called once per frame
@@ -39,22 +47,15 @@ public class Enemy : MonoBehaviour
     {
         m_position = this.transform.position;
 
-        transform.Rotate(new Vector3(0, 0, É∆));
+        m_obj.transform.position = m_position;
 
-        obj.transform.position = m_position;
 
-        m_rb.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 
-        //if(m_startTime+m_despawn<Time.time)
-        //{
-        //    Destroy(this.gameObject);
-        //}
-
-        if(Discover.m_targetflg==1)
+        if (Discover.m_targetflg == 1)
         {
-            Destroy(this.gameObject);
             Discovery();
         }
+        m_rb.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
 
     private void FixedUpdate()
@@ -64,16 +65,37 @@ public class Enemy : MonoBehaviour
 
     void Discovery()
     {
-        
+        m_obj.transform.
 
-        GameObject _target = GameObject.Find("Player");
-        
-        Vector2 _pla=_target.transform.position;
-        Vector2 _ene=this.transform.position;
+        transform.position = Vector3.MoveTowards(transform.position, m_playerTrans.position, m_speed * Time.deltaTime);
+        transform.LookAt2D(m_playerTrans.position, Vector2.up);
 
-        float _x = Mathf.Pow(_pla.x - _ene.x, 2);
-        float _y = Mathf.Pow(_pla.y - _ene.y, 2);
-
-        float _z = Mathf.Pow(_x + _y, 0.5f);
     }
+
+}
+
+
+public static class TransformExtensions
+{
+    public static void LookAt2D(this Transform _self, Transform _target, Vector2 _forward)
+    {
+        LookAt2D(_self, _target, _forward);
+    }
+
+    public static void LookAt2D(this Transform _self, Vector3 _target, Vector2 _forward)
+    {
+        var _forwardDiff = GetForwardDiffPoint(_forward);
+        Vector3 _direction = _target - _self.position;
+        float _angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
+        _self.rotation = Quaternion.AngleAxis(_angle - _forwardDiff, Vector3.forward);
+    }
+
+    static private float GetForwardDiffPoint(Vector2 _forward)
+    {
+        if (Equals(_forward, Vector2.up)) return 90;
+        if (Equals(_forward, Vector2.right)) return 0;
+
+        return 0;
+    }
+
 }
