@@ -1,0 +1,54 @@
+{
+    "name": "PlayerAim",
+    "maps": [
+        {
+            "name": "GamePlay",
+            "id": "0ba9813d-aae4-4b97-b7d4-82bf5b450bcb",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "b7db6928-f17d-45f4-90d6-b84739a1ee33",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Aim",
+                    "type": "Button",
+                    "id": "8c667d80-c57e-4bd1-932e-bbbdee678737",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "023e48b2-9f9e-4b22-a04b-13c3e89612b8",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "08df1f5d-15de-4c23-a8da-9e803400962b",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

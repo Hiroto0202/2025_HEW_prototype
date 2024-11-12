@@ -98,6 +98,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
     <Compile Include="Assets\30_Honda\Scripts\GameManager.cs" />
     <Compile Include="Assets\19_Takano\bullet.cs" />
+    <Compile Include="Assets\19_Takano\test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
