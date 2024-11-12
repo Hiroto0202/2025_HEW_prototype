@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class bullet : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class bullet : MonoBehaviour
     Rigidbody2D player_rb;
     Rigidbody2D testRb;
     GameObject testObj;
-
+    public float aimSpeed = 10f; // エイムの速度
+    private Vector2 aimInput; // 入力されたエイムの方向
 
     [SerializeField] private float time = 0;
 
@@ -33,17 +35,17 @@ public class bullet : MonoBehaviour
         time += Time.deltaTime;
         playerMoveVec = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        if (Input.GetKeyDown(KeyCode.Space)) 
-        {
-         
-            //a = 1;
-            
-            GameObject cloneObj;//クローンの変数
+            if (Input.GetButtonDown("Fire1")) // Fire1 はデフォルトで A ボタンにマッピング
+            {
+
+                //a = 1;
+
+                GameObject cloneObj;//クローンの変数
            cloneObj= Instantiate(BulletObj, transform.position, Quaternion.identity);//複製
             Rigidbody2D rb;
             rb= cloneObj.GetComponent<Rigidbody2D>();//座標を取得する
             rb.AddForce(moveVec2*fMoveSpeed, ForceMode2D.Impulse);//力を加える
-        }
+            }
 
 
         if (time > 0.1f)
@@ -55,8 +57,24 @@ public class bullet : MonoBehaviour
 
         Debug.Log(playerMoveVec);
         player_rb.velocity = playerMoveVec*speed;
+
+        
     }
-    void RepeatMethod()
+    public void OnAim(InputAction.CallbackContext context)
+    {
+        aimInput = context.ReadValue<Vector2>();
+    }
+
+    private void Update()
+    {
+        if (aimInput.sqrMagnitude > 0.1f) // 入力がある場合のみエイムを更新
+        {
+            Vector3 aimDirection = new Vector3(aimInput.x, 0, aimInput.y) * aimSpeed * Time.deltaTime;
+            transform.LookAt(transform.position + aimDirection);
+        }
+
+
+        void RepeatMethod()
     {
 
     }
