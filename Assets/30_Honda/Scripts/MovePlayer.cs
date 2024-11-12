@@ -24,27 +24,31 @@ public class MovePlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        m_moveForward = new Vector2(0.0f, 0.0f);    // 移動方向のセット
+        // ゲームマネージャーのカウントダウン後に実行
+        if (GameObject.Find("GameManager").GetComponent<GameManager>().m_countdown <= 0.0f)
+        {
+            m_moveForward = new Vector2(0.0f, 0.0f);    // 移動方向のセット
 
-        // 各キーで移動方向を変える
-        if(Input.GetKey(m_upKey))
-        {
-            m_moveForward.y = 1.0f;
-        }
-        if (Input.GetKey(m_downKey))
-        {
-            m_moveForward.y = -1.0f;
-        }
-        if (Input.GetKey(m_leftKey))
-        {
-            m_moveForward.x = -1.0f;
-        }
-        if (Input.GetKey(m_rightKey))
-        {
-            m_moveForward.x = 1.0f;
-        }
+            // 各キーで移動方向を変える
+            if (Input.GetKey(m_upKey))
+            {
+                m_moveForward.y = 1.0f;
+            }
+            if (Input.GetKey(m_downKey))
+            {
+                m_moveForward.y = -1.0f;
+            }
+            if (Input.GetKey(m_leftKey))
+            {
+                m_moveForward.x = -1.0f;
+            }
+            if (Input.GetKey(m_rightKey))
+            {
+                m_moveForward.x = 1.0f;
+            }
 
-        m_rb.velocity = Vector2.zero;   // キーが押されている間だけ移動するようにする
+            m_rb.velocity = Vector2.zero;   // キーが押されている間だけ移動するようにする
+        }
     }
     private void FixedUpdate()
     {
