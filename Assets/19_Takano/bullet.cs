@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
+//using UnityEngine.InputSystem;
 
 public class bullet : MonoBehaviour
 {
@@ -60,18 +60,18 @@ public class bullet : MonoBehaviour
 
         
     }
-    public void OnAim(InputAction.CallbackContext context)
-    {
-        aimInput = context.ReadValue<Vector2>();
-    }
+    //public void OnAim(InputAction.CallbackContext context)
+    //{
+    //    aimInput = context.ReadValue<Vector2>();
+    //}
 
-    private void Update()
-    {
-        if (aimInput.sqrMagnitude > 0.1f) // 入力がある場合のみエイムを更新
-        {
-            Vector3 aimDirection = new Vector3(aimInput.x, 0, aimInput.y) * aimSpeed * Time.deltaTime;
-            transform.LookAt(transform.position + aimDirection);
-        }
+    //private void Update()
+    //{
+    //    if (aimInput.sqrMagnitude > 0.1f) // 入力がある場合のみエイムを更新
+    //    {
+    //        Vector3 aimDirection = new Vector3(aimInput.x, 0, aimInput.y) * aimSpeed * Time.deltaTime;
+    //        transform.LookAt(transform.position + aimDirection);
+    //    }
 
 
         void RepeatMethod()
