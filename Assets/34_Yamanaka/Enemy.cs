@@ -17,8 +17,6 @@ public class Enemy : MonoBehaviour
     public float m_despawn = 5.0f;
 
 
-    float É∆ = 0.1f;
-
     GameObject m_obj;
     GameObject m_target;
 
@@ -67,6 +65,8 @@ public class Enemy : MonoBehaviour
 
     void Discovery()
     {
+        m_obj.transform.
+
         transform.position = Vector3.MoveTowards(transform.position, m_playerTrans.position, m_speed * Time.deltaTime);
         transform.LookAt2D(m_playerTrans.position, Vector2.up);
 
