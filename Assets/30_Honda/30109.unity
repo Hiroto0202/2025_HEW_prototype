@@ -1367,7 +1367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4a9843ba3a450644ad3c86deec76c1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_maxEnemyNum: 5
+  m_maxEnemyNum: 15
   m_player: {fileID: 1691799348}
   m_enemyPrefab: {fileID: 2551316936914991998, guid: a0d30c982acfafa4fb7aa40b72b30dfe, type: 3}
   m_pauseMenu: {fileID: 2073439452}
