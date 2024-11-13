@@ -7,6 +7,7 @@ public class MovePlayer : MonoBehaviour
     Rigidbody2D m_rb;
     Vector2 m_moveForward;             // 移動方向
     public float m_moveSpeed = 70.0f;  // 移動速度
+    public int m_pocket = 0;           // 所持金
 
     // 移動キー
     KeyCode m_upKey = KeyCode.UpArrow;
@@ -48,11 +49,13 @@ public class MovePlayer : MonoBehaviour
             }
 
             m_rb.velocity = Vector2.zero;   // キーが押されている間だけ移動するようにする
+            ++m_pocket; // 所持金を増やす
         }
     }
     private void FixedUpdate()
     {
         // 移動方向に指定された速度で移動
         m_rb.AddForce(m_moveForward * m_moveSpeed, ForceMode2D.Force);
+
     }
 }

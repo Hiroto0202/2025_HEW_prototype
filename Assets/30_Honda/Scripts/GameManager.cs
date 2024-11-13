@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+//using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,8 +27,10 @@ public class GameManager : MonoBehaviour
     bool m_counterFg = false;                       // 時間計測フラグ
     public float m_deleteEnemyTime = 5.0f;          // 敵を削除するか調べる間隔
     public TextMeshProUGUI m_timerText = null;      // タイマーのテキスト
-    public TextMeshProUGUI m_timeText = null;       // 経過時間のテキスト
+    public TextMeshProUGUI m_timeLimitText = null;  // 経過時間のテキスト
     public TextMeshProUGUI m_countdownText = null;  // カウントダウンのテキスト
+    public TextMeshProUGUI m_pocketText = null;     // 所持金のテキスト
+    public TextMeshProUGUI m_moneyText = null;      // すべての所持金のテキスト
 
     // 敵の出現範囲
     [Header("敵の出現範囲")]
@@ -39,22 +43,17 @@ public class GameManager : MonoBehaviour
     [Header("キー設定")]
     public InputAction m_startTimer;  // タイマーをスタートする
     public InputAction m_nextPhase;   // ビルド画面から次のシーンに移る
-    public InputAction m_pause;        // ポーズ画面に移る
+    public InputAction m_pause;       // ポーズ画面に移る
 
-    bool m_pauseFg = false;           // ポーズかどうか
+    bool m_pauseFg = false;           // ポーズメニューかどうか
+    //bool m_buildFg = false;         // ビルドメニューかどうか
+
+    int m_money = 0;                  // すべての所持金
 
     // Start is called before the first frame update
     void Start()
     {
-        m_countdownText.enabled = true; //カウントダウンを表示
-        m_pauseMenu.SetActive(false);   // ポーズメニューを非表示
-        m_buildMenu.SetActive(false);   // ビルドメニューを非表示
-
-        // ----- 最初に最大数敵を配置する ----- //
-        for (int i = 0; i < m_maxEnemyNum; ++i)
-        {
-            CreateEnemy();
-        }
+        Init();
     }
 
     // Update is called once per frame
@@ -65,12 +64,14 @@ public class GameManager : MonoBehaviour
         {
             m_countdown -= Time.deltaTime;      // カウントダウン
             m_count = (int)m_countdown;         // 整数で表示
-            m_countdownText.text = m_count.ToString();
+            m_countdownText.text = m_count.ToString("0.00s"); 
         }
         // カウントダウン後にゲームの処理
         else
         {
             m_countdownText.enabled = false;    //カウントダウンを非表示
+            m_timeLimitText.enabled = true;     // 制限時間を表示
+            m_timerText.enabled = true;         // タイマーを表示
 
             // ----- 時間を計測する処理 ----- //
             m_elapsedTime += Time.deltaTime;    // 経過時間の加算
@@ -89,9 +90,10 @@ public class GameManager : MonoBehaviour
                                                          //Debug.Log("計測中:" + (m_elapsedTime).ToString());
             }
 
-            // 時間を表示
-            m_timeText.text = m_timeLimit.ToString();
-            m_timerText.text = m_timerElapsedTime.ToString();
+            // UIを表示
+            m_timeLimitText.text = m_timeLimit.ToString("TimeLimit:0.00s");      // 制限時間
+            m_timerText.text = m_timerElapsedTime.ToString("Timer:0.00s");  // タイマー
+            m_pocketText.text = m_player.GetComponent<MovePlayer>().m_pocket.ToString("Pocket:$000000");  // 所持金
 
 
             // ----- 削除フラグの立っている敵をフェードアウト後に消す ----- //
@@ -106,12 +108,57 @@ public class GameManager : MonoBehaviour
             // ----- 制限時間経過後にビルドメニューを表示 ----- //
             if (m_timeLimit < 0)
             {
+                m_money += m_player.GetComponent<MovePlayer>().m_pocket;    // 所持金をすべての所持金に合算
                 Time.timeScale = 0.0f;      // 時間を止める
+                m_moneyText.text = m_money.ToString("Money:$000000");       // すべての所持金
                 m_buildMenu.SetActive(true);
+
+                // エンターキーが押されたら初期化する
+                if(Input.GetKeyDown(KeyCode.Return))
+                {
+                    Init();
+                }
             }
         }
     }
 
+
+    //====================================================
+    // サブルーチン
+    //====================================================
+    // 初期化処理
+    private void Init()
+    {
+        // 敵が存在する場合
+        if(m_enemyList.Count > 0)
+        {
+            // ----- すべての敵を削除する ----- //
+            for (int i = 0; i < m_enemyList.Count; ++i)
+            {
+                Destroy(m_enemyList[i]);
+                m_enemyList.RemoveAt(i);
+            }
+        }
+
+        Time.timeScale = 1.0f;      // 時間を進める
+        m_timerElapsedTime = 0.0f;  // タイマーの経過時間
+        m_elapsedTime = 0.0f;       // 経過時間
+        m_timeLimit = 10.0f;        // 制限時間
+        m_countdown = 3.0f;         // カウントダウンする秒数
+        m_count = 0;                // カウントダウン表示用
+
+        m_countdownText.enabled = true; // カウントダウンを表示
+        m_timeLimitText.enabled = false;// 制限時間を非表示
+        m_timerText.enabled = false;    // タイマーを非表示
+        m_pauseMenu.SetActive(false);   // ポーズメニューを非表示
+        m_buildMenu.SetActive(false);   // ビルドメニューを非表示
+
+        // ----- 最初に最大数敵を配置する ----- //
+        for (int i = 0; i < m_maxEnemyNum; ++i)
+        {
+            CreateEnemy();
+        }
+    }
 
     // ランダムな位置を生成する
     private Vector2 GetRandomPosition()
@@ -149,6 +196,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // インプットアクション
     private void OnEnable()
     {
         m_pause.Enable();   // アクションを有効化し、キーが押されたかを見る
@@ -161,6 +209,7 @@ public class GameManager : MonoBehaviour
         m_pause.performed -= TogglePause;   // イベントから削除する
     }
 
+    // ポーズ状態の切り替え
     private void TogglePause(InputAction.CallbackContext context)
     {
         // ポーズ状態の切り替え
