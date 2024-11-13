@@ -244,10 +244,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_moveForward: {x: 0, y: 0}
-  m_prefub: {fileID: 377226381374293948, guid: aa842fbe2466cbe45be3a1582a41c8a9, type: 3}
-  m_speed: 0.29
+  m_speed: 0.5
   m_position: {x: 0, y: 0}
-  m_despawn: 5
+  m_deleteTime: 5
+  m_deleteFlg: 0
+  m_prefub: {fileID: 377226381374293948, guid: aa842fbe2466cbe45be3a1582a41c8a9, type: 3}
+  m_discSize: 5
+  m_multi: 2
+  m_throw:
+    m_Name: Throw
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 3fe71f85-b5bf-4b33-b313-6dfe8e94bde1
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 74f2968f-27ca-4a27-a8ce-9f804bce2d09
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Throw
+      m_Flags: 0
+    m_Flags: 0
 --- !u!1 &437771046
 GameObject:
   m_ObjectHideFlags: 0
@@ -273,7 +293,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 437771046}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.03000021, y: 1.25, z: 0}
+  m_LocalPosition: {x: -0.03000021, y: 1.23, z: 0}
   m_LocalScale: {x: 0.71716, y: 0.71716, z: 0.71716}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -566,7 +586,7 @@ MonoBehaviour:
   A: 97
   S: 115
   D: 100
-  m_speed: 50
+  m_speed: 100.76
 --- !u!1 &1727236117
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,10 +619,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_moveForward: {x: 0, y: 0}
-  m_prefub: {fileID: 377226381374293948, guid: aa842fbe2466cbe45be3a1582a41c8a9, type: 3}
-  m_speed: 0.3
+  m_speed: 0.5
   m_position: {x: 0, y: 0}
-  m_despawn: 5
+  m_deleteTime: 5
+  m_deleteFlg: 0
+  m_prefub: {fileID: 377226381374293948, guid: aa842fbe2466cbe45be3a1582a41c8a9, type: 3}
+  m_discSize: 5
+  m_multi: 2
+  m_throw:
+    m_Name: Throw
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: a53aecbf-7719-42d3-a623-8eeda0aa4e03
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 4fca3e4a-5f49-458b-b051-fcfa7b78a4c1
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Throw
+      m_Flags: 0
+    m_Flags: 0
 --- !u!50 &1727236119
 Rigidbody2D:
   serializedVersion: 4
