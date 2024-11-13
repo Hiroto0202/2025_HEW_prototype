@@ -6,7 +6,7 @@ public class Discover : MonoBehaviour
 {
     float m_startTime;
 
-    public static float m_targetflg = 0;
+    public bool m_targetflg = false;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +24,11 @@ public class Discover : MonoBehaviour
     {
         if (col.transform.tag == "Player")
         {
-            m_targetflg = 1;
+            m_targetflg = true;
+        }
+        else
+        {
+            m_targetflg = false;
         }
 
     }
