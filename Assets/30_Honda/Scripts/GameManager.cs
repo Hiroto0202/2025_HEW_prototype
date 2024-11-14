@@ -15,8 +15,9 @@ public class GameManager : MonoBehaviour
     public GameObject m_enemyPrefab = null;                 
     GameObject m_newEnemy = null;                           // 生成された敵
     List<GameObject> m_enemyList = new List<GameObject>();  // 現在出現している敵のリスト
-    public GameObject m_pauseMenu = null;                   // ポーズニュー
+    public GameObject m_pauseMenu = null;                   // ポーズメニュー
     public GameObject m_buildMenu = null;                   // ビルドメニュー
+    public GameObject m_phaseMenu = null;                   // フェーズメニュー
 
     [Header("時間関係の設定")]
     float m_timerElapsedTime = 0.0f;                // タイマーの経過時間
@@ -26,11 +27,6 @@ public class GameManager : MonoBehaviour
     int m_count = 0;                                // カウントダウン表示用
     bool m_counterFg = false;                       // 時間計測フラグ
     public float m_deleteEnemyTime = 5.0f;          // 敵を削除するか調べる間隔
-    public TextMeshProUGUI m_timerText = null;      // タイマーのテキスト
-    public TextMeshProUGUI m_timeLimitText = null;  // 経過時間のテキスト
-    public TextMeshProUGUI m_countdownText = null;  // カウントダウンのテキスト
-    public TextMeshProUGUI m_pocketText = null;     // 所持金のテキスト
-    public TextMeshProUGUI m_moneyText = null;      // すべての所持金のテキスト
 
     // 敵の出現範囲
     [Header("敵の出現範囲")]
@@ -39,17 +35,30 @@ public class GameManager : MonoBehaviour
     public float m_enemyMinY = 0;
     public float m_enemyMaxY = 0;
 
+    // UI
+    [Header("UI")]
+    public TextMeshProUGUI m_timerText = null;      // タイマーのテキスト
+    public TextMeshProUGUI m_timeLimitText = null;  // 経過時間のテキスト
+    public TextMeshProUGUI m_countdownText = null;  // カウントダウンのテキスト
+    public TextMeshProUGUI m_phaseText = null;      // フェーズのテキスト
+    public TextMeshProUGUI m_weatherText = null;    // 天気のテキスト
+    public TextMeshProUGUI m_pocketText = null;     // 所持金のテキスト
+    public TextMeshProUGUI m_moneyText = null;      // すべての所持金のテキスト
+    public TextMeshProUGUI m_endText = null;        // 終了メッセージのテキスト
+
     // キー設定
     [Header("キー設定")]
     public InputAction m_startTimer;  // タイマーをスタートする
     public InputAction m_nextPhase;   // ビルド画面から次のシーンに移る
     public InputAction m_pause;       // ポーズ画面に移る
 
-    bool m_pauseFg = false;           // ポーズメニューかどうか
-    //bool m_buildFg = false;         // ビルドメニューかどうか
+    bool m_pauseFg = false;     // ポーズメニューかどうか
 
-    int m_money = 0;                  // すべての所持金
-    int m_addMoneyCnt = 0;            // お金を合算した回数
+    int m_money = 0;            // すべての所持金
+    int m_addMoneyCnt = 0;      // お金を合算した回数
+
+    int m_phaseCnt = 0;         // 何フェーズ目かのカウント      
+
 
     // Start is called before the first frame update
     void Start()
@@ -70,7 +79,8 @@ public class GameManager : MonoBehaviour
         // カウントダウン後にゲームの処理
         else
         {
-            m_countdownText.enabled = false;    //カウントダウンを非表示
+            m_phaseMenu.SetActive(false);       // フェーズメニューを非表示
+            m_countdownText.enabled = false;    // カウントダウンを非表示
             m_timeLimitText.enabled = true;     // 制限時間を表示
             m_timerText.enabled = true;         // タイマーを表示
             m_pocketText.enabled = true;        // タイマーを表示
@@ -107,32 +117,45 @@ public class GameManager : MonoBehaviour
                 CreateEnemy();
             }
 
-            // ----- 制限時間経過後にビルドメニューを表示 ----- //
+            // ----- 制限時間経過後に3フェーズ中の時ビルドメニューを表示 ----- //
             if (m_timeLimit < 0)
             {
-                // 一回のみ
-                if(m_addMoneyCnt == 0)
+                if (m_phaseCnt < 3)
                 {
-                    m_money += m_player.GetComponent<MovePlayer>().m_pocket;    // 所持金をすべての所持金に合算
-                    ++m_addMoneyCnt;
-                }
-                Time.timeScale = 0.0f;      // 時間を止める
-                m_moneyText.text = m_money.ToString("Money:$000000");       // すべての所持金
-                m_buildMenu.SetActive(true);
+                    // 一回のみ
+                    if (m_addMoneyCnt == 0)
+                    {
+                        m_money += m_player.GetComponent<MovePlayer>().m_pocket;    // 所持金をすべての所持金に合算
+                        ++m_addMoneyCnt;
+                    }
+                    Time.timeScale = 0.0f;      // 時間を止める
+                    m_moneyText.text = m_money.ToString("Money:$000000");       // すべての所持金
+                    m_buildMenu.SetActive(true);
 
-                // エンターキーが押されたら初期化する
-                if(Input.GetKeyDown(KeyCode.Return))
+                    // エンターキーが押されたら初期化する
+                    if (Input.GetKeyDown(KeyCode.Return))
+                    {
+                        Init();
+                    }
+                }
+                // 終了メッセージを表示
+                else
                 {
-                    Init();
+                    Time.timeScale = 0.0f;      // 時間を止める
+                    m_endText.enabled = true;
+
+                    // エンターキーが押されたら初期化する
+                    if (Input.GetKeyDown(KeyCode.Return))
+                    {
+                        m_phaseCnt = 0;
+                        Init();
+                    }
                 }
             }
         }
     }
 
 
-    //====================================================
-    // サブルーチン
-    //====================================================
     // 初期化処理
     private void Init()
     {
@@ -156,10 +179,32 @@ public class GameManager : MonoBehaviour
         m_player.GetComponent<MovePlayer>().m_pocket = 0;               // 所持金をリセット
         m_player.transform.position = new Vector3(0.0f, 0.0f, 0.0f);    // 位置をリセット
 
+        // 何フェーズ目かによって表示を変更
+        if(m_phaseCnt == 0)
+        {
+            m_phaseText.text = "Asa";
+            m_phaseCnt = 1;   // フェーズを進める
+        }
+        else if(m_phaseCnt == 1)
+        {
+            m_phaseText.text = "Hiru";
+            m_phaseCnt = 2;   // フェーズを進める
+        }
+        else if(m_phaseCnt == 2)
+        {
+            m_phaseText.text = "Yoru";
+            m_phaseCnt = 3;   // フェーズを進める
+        }
+
+        // 天気を変更
+        m_weatherText.text = "Hare";
+
+        m_phaseMenu.SetActive(true);    // フェーズメニューを表示
         m_countdownText.enabled = true; // カウントダウンを表示
         m_timeLimitText.enabled = false;// 制限時間を非表示
         m_timerText.enabled = false;    // タイマーを非表示
         m_pocketText.enabled = false;   // 所持金を非表示
+        m_endText.enabled = false;      // 終了メッセージを非表示
         m_pauseMenu.SetActive(false);   // ポーズメニューを非表示
         m_buildMenu.SetActive(false);   // ビルドメニューを非表示
 
