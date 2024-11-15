@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+//using System.Diagnostics;
+//using System.Diagnostics;
 //yyyusing System.Diagnostics;
 //using System.Diagnostics;
 //using System.Diagnostics;
@@ -18,6 +20,7 @@ public class bullet : MonoBehaviour
     Rigidbody2D player_rb;
     Rigidbody2D testRb;
     GameObject testObj;
+    float angle;
 
     public float aimSpeed = 10f; // エイムの速度
     private Vector2 aimInput; // 入力されたエイムの方向
@@ -95,14 +98,17 @@ public class bullet : MonoBehaviour
         // moveから右スティックの入力を取得
         Vector2 moveInput = m_aim.ReadValue<Vector2>();
         Debug.Log("Right Stick Input: " + moveInput);
-       
-       
-            //time = 0;
-            
-            //testRb.AddForce(moveVec2 * 10, ForceMode2D.Force);
-        
 
-        Debug.Log(playerMoveVec);
+        if (moveInput.sqrMagnitude > 0.1f)
+        {
+            angle = Mathf.Atan2(moveInput.y, moveInput.x) * Mathf.Rad2Deg; // xとyを逆にしました
+            this.transform.rotation = Quaternion.Euler(0, 0, angle);
+        }
+
+        this.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+
+       // Debug.Log(playerMoveVec);
         player_rb.velocity = playerMoveVec*speed;
 
         // スティックの入力がある場合に発射   Fire1はAボタン
