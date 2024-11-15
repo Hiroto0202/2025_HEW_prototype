@@ -12,10 +12,19 @@ public class Player : MonoBehaviour
     public KeyCode D = KeyCode.D;
     public float m_speed = 30.0f;    
 
+    public KeyCode Space = KeyCode.Space;
+
+    GameObject m_prefub;
+    dustShot _dust;
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        m_prefub = GameObject.Find("dustShot");
+        _dust = m_prefub.GetComponent<dustShot>();
+
     }
 
     // Update is called once per frame
@@ -41,6 +50,11 @@ public class Player : MonoBehaviour
         if (Input.GetKey(D))
         {
             m_moveForward.x = 1.0f;
+        }
+
+        if(Input.GetKey(Space))
+        {
+            _dust.Shot();
         }
 
         rb.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
