@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-//yyyusing System.Diagnostics;
-//using System.Diagnostics;
+using System.Security.Cryptography;
 //using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -18,14 +17,13 @@ public class bullet : MonoBehaviour
     Rigidbody2D player_rb;
     Rigidbody2D testRb;
     GameObject testObj;
+    //Rigidbody2D _bullet;
 
     public float aimSpeed = 10f; // エイムの速度
     private Vector2 aimInput; // 入力されたエイムの方向
-
-
     public InputAction m_aim;
-
     private Gamepad gamepad;
+    public float deceleration = 0.98f; // 減速率（調整可能）
 
 
     [SerializeField] private float time = 0;
@@ -57,6 +55,70 @@ public class bullet : MonoBehaviour
     void Update()
     {
 
+        Key();
+
+
+
+
+        time += Time.deltaTime;
+        //スティックの読み込み
+        playerMoveVec = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+    
+        // moveから右スティックの入力を取得
+        Vector2 moveInput = m_aim.ReadValue<Vector2>();
+        Debug.Log("Right Stick Input: " + moveInput);
+        //角度を計算
+        //if (moveInput.sqrMagnitude > 0.1f)
+        {
+            float angle = Mathf.Atan2(moveInput.y, moveInput.x) * Mathf.Rad2Deg; ;
+
+            transform.rotation = Quaternion.Euler(0, 0, angle);
+        }
+        //time = 0;
+
+        //testRb.AddForce(moveVec2 * 10, ForceMode2D.Force);
+
+
+        Debug.Log(playerMoveVec);
+        player_rb.velocity = playerMoveVec*speed;//左スティック
+
+        // スティックの入力がある場合に発射   Fire1はAボタン
+        if (moveInput.sqrMagnitude > 0.1f && gamepad.leftTrigger.wasPressedThisFrame)
+        {
+            Shoot(moveInput);
+        }
+
+    }
+
+
+
+
+    //弾発射の関数
+    private void Shoot(Vector2 aimDirection)    
+    {
+        
+        //if (time > 2.0f)
+        {
+            //弾のインスタンス生成
+            GameObject cloneObj;//クローンの変数
+        cloneObj = Instantiate(BulletObj, transform.position, Quaternion.identity);//複製
+        Rigidbody2D rb;
+        Vector2 shootDirection = aimDirection.normalized;// 弾の向きを計算して設定
+        rb = cloneObj.GetComponent<Rigidbody2D>();//座標を取得する
+        rb.AddForce(shootDirection * fMoveSpeed, ForceMode2D.Impulse);//力を加える
+            time = 0.0f;
+        }
+      
+
+    }
+    
+
+    void RepeatMethod()
+    {
+
+    }
+    void Key()
+    {
         // 接続されたゲームパッドを取得
         gamepad = Gamepad.current;
         if (gamepad == null)
@@ -84,54 +146,5 @@ public class bullet : MonoBehaviour
         if (gamepad.dpad.down.wasPressedThisFrame) Debug.Log("D-Pad 下が押されました");
         if (gamepad.dpad.left.wasPressedThisFrame) Debug.Log("D-Pad 左が押されました");
         if (gamepad.dpad.right.wasPressedThisFrame) Debug.Log("D-Pad 右が押されました");
-
-
-
-
-        time += Time.deltaTime;
-        //スティックの読み込み
-        playerMoveVec = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-    
-        // moveから右スティックの入力を取得
-        Vector2 moveInput = m_aim.ReadValue<Vector2>();
-        Debug.Log("Right Stick Input: " + moveInput);
-       
-       
-            //time = 0;
-            
-            //testRb.AddForce(moveVec2 * 10, ForceMode2D.Force);
-        
-
-        Debug.Log(playerMoveVec);
-        player_rb.velocity = playerMoveVec*speed;
-
-        // スティックの入力がある場合に発射   Fire1はAボタン
-        if (moveInput.sqrMagnitude > 0.1f && gamepad.leftTrigger.wasPressedThisFrame)
-        {
-            Shoot(moveInput);
-        }
-        //if (gamepad.rightTrigger.wasPressedThisFrame)
-    }
-    //弾発射の関数
-    private void Shoot(Vector2 aimDirection)
-    {
-        if (time > 2.0f)
-        {
-            //弾のインスタンス生成
-            GameObject cloneObj;//クローンの変数
-        cloneObj = Instantiate(BulletObj, transform.position, Quaternion.identity);//複製
-        Rigidbody2D rb;
-        Vector2 shootDirection = aimDirection.normalized;// 弾の向きを計算して設定
-        rb = cloneObj.GetComponent<Rigidbody2D>();//座標を取得する
-        rb.AddForce(shootDirection * fMoveSpeed, ForceMode2D.Impulse);//力を加える
-            time = 0.0f;
-        }
-
-    }
-    
-
-    void RepeatMethod()
-    {
-
     }
 }
