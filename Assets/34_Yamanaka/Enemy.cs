@@ -30,7 +30,8 @@ public class Enemy : MonoBehaviour
 
     public InputAction m_throw;     // ‚²‚İ‚ğ“Š‚°‚é
 
-    bool _flg = false;              // ÚG”»’è
+    public bool _dFlg = false;              // ƒSƒ~‚Æ‚ÌÚG”»’è
+    bool _pFlg = false;              // ƒvƒŒƒCƒ„[‚Æ‚ÌÚG”»’è
 
     // Start is called before the first frame update
     void Start()
@@ -71,16 +72,36 @@ public class Enemy : MonoBehaviour
         m_position = this.transform.position;
         m_obj.transform.position = m_position;
 
+
+        //if(_pFlg==true)
+        //{
+        //    Discovery();
+        //}
+
         // ÚG”»’è‚ª^‚È‚ç
-        if (_flg == true)
+        if (_dFlg == true)
         {
-            Discovery();
+
+            if (_pFlg != true)
+            {
+                Battle();
+            }
+            else
+            {
+                Discovery();
+            }
         }
 
     }
 
     private void FixedUpdate()
     {
+    }
+
+    void Battle()
+    {
+        m_obj.transform.localScale = Vector3.one * m_discSize * 2;
+
     }
 
     // –Ú•W‚ğŒ©‚Â‚¯‚½‚Ìˆ—
@@ -111,7 +132,8 @@ public class Enemy : MonoBehaviour
     // –Ú•W‚ğ”­Œ©
     private void Throw(InputAction.CallbackContext context)
     {
-        _flg = m_obj.GetComponent<Discover>().m_targetflg;
+        _dFlg = m_obj.GetComponent<Discover>().m_battleflg;
+        _pFlg = m_obj.GetComponent<Discover>().m_targetflg;
     }
 }
 

@@ -6,6 +6,7 @@ public class Discover : MonoBehaviour
 {
     float m_startTime;
 
+    public bool m_battleflg = false;
     public bool m_targetflg = false;
 
     // Start is called before the first frame update
@@ -22,6 +23,11 @@ public class Discover : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
+        if (col.transform.tag == "Dust")
+        {
+            m_battleflg = true;
+
+        }
         if (col.transform.tag == "Player")
         {
             m_targetflg = true;
