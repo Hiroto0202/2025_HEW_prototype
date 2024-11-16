@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
     public InputAction m_pause;       // ポーズ画面に移る
 
     bool m_pauseFg = false;     // ポーズメニューかどうか
+    bool m_buildFg = false;     // ビルドメニューかどうか
 
     int m_money = 0;            // すべての所持金
     int m_addMoneyCnt = 0;      // お金を合算した回数
@@ -99,7 +100,6 @@ public class GameManager : MonoBehaviour
             if (m_counterFg == true)
             {
                 m_timerElapsedTime += Time.deltaTime;    // 経過時間の加算
-                                                         //Debug.Log("計測中:" + (m_elapsedTime).ToString());
             }
 
             // UIを表示
@@ -117,41 +117,11 @@ public class GameManager : MonoBehaviour
                 CreateEnemy();
             }
 
+            // ----- ポーズ画面の状態切り替え ----- //
+            TogglePause();
+
             // ----- 制限時間経過後に3フェーズ中の時ビルドメニューを表示 ----- //
-            if (m_timeLimit < 0)
-            {
-                if (m_phaseCnt < 3)
-                {
-                    // 一回のみ
-                    if (m_addMoneyCnt == 0)
-                    {
-                        m_money += m_player.GetComponent<MovePlayer>().m_pocket;    // 所持金をすべての所持金に合算
-                        ++m_addMoneyCnt;
-                    }
-                    Time.timeScale = 0.0f;      // 時間を止める
-                    m_moneyText.text = m_money.ToString("Money:$000000");       // すべての所持金
-                    m_buildMenu.SetActive(true);
-
-                    // エンターキーが押されたら初期化する
-                    if (Input.GetKeyDown(KeyCode.Return))
-                    {
-                        Init();
-                    }
-                }
-                // 終了メッセージを表示
-                else
-                {
-                    Time.timeScale = 0.0f;      // 時間を止める
-                    m_endText.enabled = true;
-
-                    // エンターキーが押されたら初期化する
-                    if (Input.GetKeyDown(KeyCode.Return))
-                    {
-                        m_phaseCnt = 0;
-                        Init();
-                    }
-                }
-            }
+            ToggleBuild();
         }
     }
 
@@ -162,7 +132,7 @@ public class GameManager : MonoBehaviour
         // 敵が存在する場合
         if(m_enemyList.Count > 0)
         {
-            // ----- すべての敵を削除する ----- //
+            // すべての敵を削除する
             for (int i = m_enemyList.Count - 1; i >= 0; --i)
             {
                 Destroy(m_enemyList[i]);
@@ -170,6 +140,8 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        m_pauseFg = false;          // ポーズメニューにしない
+        m_buildFg = false;          // ビルドメニューにしない       
         m_timerElapsedTime = 0.0f;  // タイマーの経過時間
         m_elapsedTime = 0.0f;       // 経過時間
         m_timeLimit = 10.0f;        // 制限時間
@@ -247,24 +219,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // インプットアクション
-    private void OnEnable()
-    {
-        m_pause.Enable();   // アクションを有効化し、キーが押されたかを見る
-        m_pause.performed += TogglePause;   // アクションにTogglePause関数を割り当てる
-    }
-
-    private void OnDisable()
-    {
-        m_pause.Disable();  // アクションを無効化する
-        m_pause.performed -= TogglePause;   // イベントから削除する
-    }
-
     // ポーズ状態の切り替え
-    private void TogglePause(InputAction.CallbackContext context)
+    private void TogglePause()
     {
-        // ポーズ状態の切り替え
-        m_pauseFg = !m_pauseFg;
+        // ESCキーでポーズ状態の切り替え
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            m_pauseFg = !m_pauseFg;
+        }
 
         // ポーズする
         if (m_pauseFg == true)
@@ -272,6 +234,18 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 0.0f;  // 時間を止める
             m_pauseMenu.SetActive(true);
             Debug.Log("ポーズ中");
+
+            // ビルドメニューでなければbackspaceキーでゲームを終了
+            if (Input.GetKeyDown(KeyCode.Backspace) && m_buildFg == false)
+            {
+                // UnityEditorでの実行なら再生モードを解除
+                #if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;
+                // ビルド後ならアプリケーションを終了
+                #else
+                    Application.Quit();
+                #endif
+            }
         }
         // ポーズを解除
         else
@@ -281,4 +255,79 @@ public class GameManager : MonoBehaviour
             Debug.Log("ポーズ解除");
         }
     }
+
+    // ビルド状態の切り替え
+    private void ToggleBuild()
+    {
+        if (m_timeLimit < 0)
+        {
+            m_buildFg = true;   
+            if (m_phaseCnt < 3)
+            {
+                // 一回のみ
+                if (m_addMoneyCnt == 0)
+                {
+                    m_money += m_player.GetComponent<MovePlayer>().m_pocket;    // 所持金をすべての所持金に合算
+                    ++m_addMoneyCnt;
+                }
+                Time.timeScale = 0.0f;      // 時間を止める
+                m_moneyText.text = m_money.ToString("Money:$000000");       // すべての所持金
+                m_buildMenu.SetActive(true);
+
+                // エンターキーが押されたら初期化する
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    Init();
+                }
+            }
+            // 終了メッセージを表示
+            else
+            {
+                Time.timeScale = 0.0f;      // 時間を止める
+                m_endText.enabled = true;
+
+                // エンターキーが押されたら初期化する
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    m_phaseCnt = 0;
+                    Init();
+                }
+            }
+        }
+    }
+
+    //// インプットアクション
+    //private void OnEnable()
+    //{
+    //    m_pause.Enable();   // アクションを有効化し、キーが押されたかを見る
+    //    m_pause.performed += TogglePause;   // アクションにTogglePause関数を割り当てる
+    //}
+
+    //private void OnDisable()
+    //{
+    //    m_pause.Disable();  // アクションを無効化する
+    //    m_pause.performed -= TogglePause;   // イベントから削除する
+    //}
+
+    //// ポーズ状態の切り替え
+    //private void TogglePause(InputAction.CallbackContext context)
+    //{
+    //    // ポーズ状態の切り替え
+    //    m_pauseFg = !m_pauseFg;
+
+    //    // ポーズする
+    //    if (m_pauseFg == true)
+    //    {
+    //        Time.timeScale = 0.0f;  // 時間を止める
+    //        m_pauseMenu.SetActive(true);
+    //        Debug.Log("ポーズ中");
+    //    }
+    //    // ポーズを解除
+    //    else
+    //    {
+    //        m_pauseMenu.SetActive(false);
+    //        Time.timeScale = 1.0f;  // 時間を再開
+    //        Debug.Log("ポーズ解除");
+    //    }
+    //}
 }
