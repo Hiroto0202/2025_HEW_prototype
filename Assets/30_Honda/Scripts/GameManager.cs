@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using static UnityEngine.GraphicsBuffer;
 //using System;
 
 public class GameManager : MonoBehaviour
@@ -114,7 +115,7 @@ public class GameManager : MonoBehaviour
             // ----- 敵をランダムな位置に作成する処理 ----- //
             if (m_enemyList.Count < m_maxEnemyNum)
             {
-                CreateEnemy();
+                StartCoroutine(FadeIn());
             }
 
             // ----- ポーズ画面の状態切り替え ----- //
@@ -125,8 +126,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
+    //====================================================
     // 初期化処理
+    //====================================================
     private void Init()
     {
         // 敵が存在する場合
@@ -183,22 +185,18 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1.0f;          // 時間を進める
     }
 
-    // ランダムな位置を生成する
-    private Vector2 GetRandomPosition()
-    {
-        // 決められた範囲内で生成
-        float _x = Random.Range(m_enemyMinX, m_enemyMaxX);
-        float _y = Random.Range(m_enemyMinY, m_enemyMaxY);
-
-        return new Vector2(_x, _y); // 座標を返す
-    }
-
+    //====================================================
     // 敵をランダムな位置に生成する
+    //====================================================
     private void CreateEnemy()
     {
         m_newEnemy = Instantiate(m_enemyPrefab);                // 生成
         m_enemyList.Add(m_newEnemy);                            // リストに追加
-        m_newEnemy.transform.position = GetRandomPosition();    // ランダムな位置にする
+
+        // 決められた範囲内で生成
+        float _x = Random.Range(m_enemyMinX, m_enemyMaxX);
+        float _y = Random.Range(m_enemyMinY, m_enemyMaxY);
+        m_newEnemy.transform.position = new Vector2(_x, _y);    // ランダムな位置にする
     }
 
     // 削除フラグの立っている敵を1体ずつ削除
@@ -211,19 +209,19 @@ public class GameManager : MonoBehaviour
             // 敵のスクリプト内の削除フラグが立っている時
             if (m_enemyList[_array].GetComponent<MoveEnemy>().m_deleteFg == true)
             {
-                Destroy(m_enemyList[_array]);
-                m_enemyList.RemoveAt(_array);
-                Debug.Log(_array.ToString() + "番目を削除した");
+                StartCoroutine(FadeOut(m_enemyList[_array], _array));
             }
             m_timerElapsedTime = 0;
         }
     }
 
+    //====================================================
     // ポーズ状態の切り替え
+    //====================================================
     private void TogglePause()
     {
         // ESCキーでポーズ状態の切り替え
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             m_pauseFg = !m_pauseFg;
         }
@@ -233,18 +231,18 @@ public class GameManager : MonoBehaviour
         {
             Time.timeScale = 0.0f;  // 時間を止める
             m_pauseMenu.SetActive(true);
-            Debug.Log("ポーズ中");
+            //Debug.Log("ポーズ中");
 
             // ビルドメニューでなければbackspaceキーでゲームを終了
             if (Input.GetKeyDown(KeyCode.Backspace) && m_buildFg == false)
             {
                 // UnityEditorでの実行なら再生モードを解除
-                #if UNITY_EDITOR
-                    UnityEditor.EditorApplication.isPlaying = false;
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
                 // ビルド後ならアプリケーションを終了
-                #else
+#else
                     Application.Quit();
-                #endif
+#endif
             }
         }
         // ポーズを解除
@@ -252,16 +250,18 @@ public class GameManager : MonoBehaviour
         {
             m_pauseMenu.SetActive(false);
             Time.timeScale = 1.0f;  // 時間を再開
-            Debug.Log("ポーズ解除");
+            //Debug.Log("ポーズ解除");
         }
     }
 
+    //====================================================
     // ビルド状態の切り替え
+    //====================================================
     private void ToggleBuild()
     {
         if (m_timeLimit < 0)
         {
-            m_buildFg = true;   
+            m_buildFg = true;
             if (m_phaseCnt < 3)
             {
                 // 一回のみ
@@ -296,7 +296,62 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //// インプットアクション
+    //====================================================
+    // オブジェクトをフェードインさせるコルーチン
+    //====================================================
+    private IEnumerator FadeIn()
+    {
+        CreateEnemy();
+
+        SpriteRenderer _spriteRenderer = m_newEnemy.GetComponent<SpriteRenderer>();
+        Color _spriteColor = _spriteRenderer.color;             // 現在のRGBAを取得
+        _spriteColor.a = 0.0f;                                  // 透明にする
+
+        float _duration = 0.5f;                                 // フェードにかける時間
+        float _targetAlpha = 1.0f;                              // 最終のアルファ値
+
+        // 現在のアルファ値が指定された値でない間
+        while (!Mathf.Approximately(_spriteColor.a, _targetAlpha))
+        {
+            float _changeSpeed = Time.deltaTime / _duration;   // 透明度の変化値を求める
+
+            // 求めた変化値ごとにアルファ値を変更する
+            _spriteColor.a = Mathf.MoveTowards(_spriteColor.a, _targetAlpha, _changeSpeed);
+            _spriteRenderer.color = _spriteColor;
+            yield return null;
+        }
+    }
+
+    //====================================================
+    // オブジェクトをフェードアウトさせるコルーチン
+    //====================================================
+    private IEnumerator FadeOut(GameObject _target, int _array)
+    {
+        SpriteRenderer _spriteRenderer = _target.GetComponent<SpriteRenderer>();
+        Color _spriteColor = _spriteRenderer.color;     // 現在のRGBAを取得
+        float _duration = 0.5f;                         // フェードにかける時間
+        float _targetAlpha = 0.0f;                      // 最終のアルファ値
+
+        // 現在のアルファ値が指定された値でない間
+        while (!Mathf.Approximately(_spriteColor.a, _targetAlpha))
+        {
+            float _changeSpeed = Time.deltaTime / _duration;   // 透明度の変化値を求める
+
+            // 求めた変化値ごとにアルファ値を変更する
+            _spriteColor.a = Mathf.MoveTowards(_spriteColor.a, _targetAlpha, _changeSpeed);
+            _spriteRenderer.color = _spriteColor;
+            yield return null;
+        }
+        // フェードアウト後に敵を削除
+        Destroy(_target);
+        m_enemyList.RemoveAt(_array);
+        Debug.Log(_array.ToString() + "番目を削除した");
+    }
+
+
+    //====================================================
+    // インプットアクション
+    //====================================================
     //private void OnEnable()
     //{
     //    m_pause.Enable();   // アクションを有効化し、キーが押されたかを見る
