@@ -25,13 +25,24 @@ public class Enemy : MonoBehaviour
     public float m_discSize = 5.0f; // 認識範囲の大きさ
     public float m_multi = 2.0f;    // 目標を発見したときの認識範囲の倍率
 
-    GameObject m_target;            // 目標入力用インスタンス
-    Transform m_targetTrans;        // 目標の情報
+    GameObject m_player;            // 目標入力用インスタンス
+    Transform m_playerTrans;        // 目標の情報
+
+    GameObject m_dust;            // 目標入力用インスタンス
+    Transform m_dustTrans;        // 目標の情報
 
     public InputAction m_throw;     // ごみを投げる
 
     public bool _dFlg = false;              // ゴミとの接触判定
     bool _pFlg = false;              // プレイヤーとの接触判定
+
+    GameObject m_create;
+
+    SpriteRenderer m_fade;
+    Color m_spriteColor;
+
+    float m_duration;                             // フェードアウトにかける時間
+    float m_targetAlpha;                             // 目標アルファ値
 
     // Start is called before the first frame update
     void Start()
@@ -51,9 +62,19 @@ public class Enemy : MonoBehaviour
         // 移動度初期化
         m_moveForward.x = 1.0f;
 
-        // 目標を探して情報取得
-        m_target = GameObject.Find("Player");
-        m_targetTrans = m_target.transform;
+        // プレイヤーを探す
+        m_player = GameObject.Find("Player");
+        m_playerTrans = m_player.transform;
+
+        //m_create = GameObject.Find("GameManager");
+
+        m_fade = GetComponent<SpriteRenderer>();
+        m_spriteColor = m_fade.color;
+        m_spriteColor.a = 0;                                 // 透明にする
+
+        m_duration = 1f;
+        m_targetAlpha = 1;
+
     }
 
     // Update is called once per frame
@@ -62,45 +83,86 @@ public class Enemy : MonoBehaviour
         // 経過時間を取得
         m_elapsedTime += Time.deltaTime;
 
-        // m_deleteTime秒経過したなら
-        if (m_elapsedTime > m_deleteTime)
+
+        //フェードイン
+        if (m_spriteColor.a <= m_targetAlpha)
         {
-            m_deleteFlg = true;
+            float _changeSpeed = Time.deltaTime / m_duration;    // 透明度の変化速度を求める
+
+            // 求めた変化速度ごとにアルファ値を変更する
+            m_spriteColor.a += _changeSpeed;
+            m_fade.color = m_spriteColor;
+        }
+        else
+        {
+            // これのポジションを取って、prefubのポジションに入れる
+            m_position = this.transform.position;
+            m_obj.transform.position = m_position;
+
+
+            //if(_pFlg==true)
+            //{
+            //    Discovery();
+            //}
+
+            // 接触判定が真なら
+            if (_dFlg == true)
+            {
+
+                if (_pFlg != true)
+                {
+                    //Battle();
+                }
+                else
+                {
+                    Discovery();
+                }
+            }
+
         }
 
-        // これのポジションを取って、prefubのポジションに入れる
-        m_position = this.transform.position;
-        m_obj.transform.position = m_position;
-
-
-        //if(_pFlg==true)
-        //{
-        //    Discovery();
-        //}
-
-        // 接触判定が真なら
-        if (_dFlg == true)
-        {
-
-            if (_pFlg != true)
-            {
-                Battle();
-            }
-            else
-            {
-                Discovery();
-            }
-        }
 
     }
 
+
+
     private void FixedUpdate()
     {
+
+        // m_deleteTime秒経過したなら
+        if (m_elapsedTime > m_deleteTime)
+        {
+            m_duration = 0.5f;
+            m_targetAlpha = 0;
+
+            //フェードアウト
+            if (m_spriteColor.a >= m_targetAlpha)
+            {
+                float _changeSpeed = Time.deltaTime / m_duration;    // 透明度の変化速度を求める
+
+                // 求めた変化速度ごとにアルファ値を変更する
+                m_spriteColor.a -= _changeSpeed;
+                m_fade.color = m_spriteColor;
+            }
+            else
+            {
+                m_deleteFlg = true;
+            }
+
+        }
+
     }
 
     void Battle()
     {
-        m_obj.transform.localScale = Vector3.one * m_discSize * 2;
+        m_obj.transform.localScale = Vector3.one * m_discSize * 1.5f;
+
+        // ゴミを探す
+        m_dust = GameObject.Find("Dust");
+        m_dustTrans = m_dust.transform;
+
+        transform.position = Vector3.MoveTowards(transform.position, m_dustTrans.position, m_speed * Time.deltaTime);
+        transform.LookAt2D(m_dustTrans.position, Vector2.up);
 
     }
 
@@ -110,8 +172,8 @@ public class Enemy : MonoBehaviour
         m_obj.transform.localScale = Vector3.one * m_discSize * m_multi;
 
 
-        transform.position = Vector3.MoveTowards(transform.position, m_targetTrans.position, m_speed * Time.deltaTime);
-        transform.LookAt2D(m_targetTrans.position, Vector2.up);
+        //transform.position = Vector3.MoveTowards(transform.position, m_playerTrans.position, m_speed * Time.deltaTime);
+        transform.LookAt2D(m_playerTrans.position, Vector2.up);
 
     }
 
@@ -134,6 +196,48 @@ public class Enemy : MonoBehaviour
     {
         _dFlg = m_obj.GetComponent<Discover>().m_battleflg;
         _pFlg = m_obj.GetComponent<Discover>().m_targetflg;
+    }
+
+    // フェードイン
+    private void FadeIn()
+    {
+        SpriteRenderer _spriteRenderer = this.GetComponent<SpriteRenderer>();
+        Color _spriteColor = _spriteRenderer.color;         // 現在のRGBAを取得
+        _spriteColor.a = 0;                                 // 透明にする
+        float _duration = 0.5f;                             // フェードインにかける時間
+        float _targetAlpha = 1;                             // 目標アルファ値
+
+        // 現在のアルファ値が目標アルファ値でない場合
+        while (!Mathf.Approximately(_spriteColor.a, _targetAlpha))
+        {
+            float _changeSpeed = Time.deltaTime / _duration;    // 透明度の変化速度を求める
+
+            // 求めた変化速度ごとにアルファ値を変更する
+            _spriteColor.a = Mathf.MoveTowards(_spriteColor.a, _targetAlpha, _changeSpeed);
+            _spriteRenderer.color = _spriteColor;
+        }
+    }
+
+    // フェードアウト
+    private /*IEnumerator*/ void FadeOut()
+    {
+        SpriteRenderer _spriteRenderer = this.GetComponent<SpriteRenderer>();
+        Color _spriteColor = _spriteRenderer.color;         // 現在のRGBAを取得
+        float _duration = 100f;                             // フェードアウトにかける時間
+        float _targetAlpha = 0;                             // 目標アルファ値
+
+        // 現在のアルファ値が目標アルファ値でない場合
+        //while (!Mathf.Approximately(_spriteColor.a, _targetAlpha))
+        {
+            float _changeSpeed = Time.fixedDeltaTime / _duration;    // 透明度の変化速度を求める
+
+            // 求めた変化速度ごとにアルファ値を変更する
+            _spriteColor.a = Mathf.MoveTowards(_spriteColor.a, _targetAlpha, _changeSpeed);
+            _spriteRenderer.color = _spriteColor;
+
+            //yield return null;
+        }
+
     }
 }
 
@@ -166,3 +270,4 @@ public static class TransformExtensions
     }
 
 }
+
