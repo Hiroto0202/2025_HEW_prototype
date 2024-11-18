@@ -14,8 +14,8 @@ public class Player : MonoBehaviour
 
     public KeyCode Space = KeyCode.Space;
 
-    public GameObject m_prefub;
-    GameObject m_obj;
+    public GameObject m_prefub=null;
+    GameObject m_obj = null;
     Vector2 m_move;
     public float m_power = 0.5f;
 
@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-
+        m_move.y = 1.0f;
     }
 
     // Update is called once per frame
@@ -56,7 +56,6 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(Space))
         {
 
-            m_move.y = 1.0f;
             Vector3 _vec = new Vector3(this.transform.position.x, this.transform.position.y, -0.01f);
             m_obj = Instantiate(m_prefub, _vec, Quaternion.identity);
 
@@ -78,7 +77,6 @@ public class Player : MonoBehaviour
         }
         else
         {
-            Destroy(m_obj);
             m_power = 0.5f;
         }
     }
