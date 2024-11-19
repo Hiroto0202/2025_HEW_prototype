@@ -1,0 +1,132 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6062025998857924920
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6062025998857924918}
+  - component: {fileID: 6062025998857924921}
+  - component: {fileID: 6062025998857924919}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6062025998857924918
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6062025998857924920}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6062025998857924921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6062025998857924920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4a9843ba3a450644ad3c86deec76c1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_maxEnemyNum: 15
+  m_player: {fileID: 0}
+  m_enemyPrefab: {fileID: 2551316936914991998, guid: a0d30c982acfafa4fb7aa40b72b30dfe, type: 3}
+  m_pauseMenu: {fileID: 0}
+  m_buildMenu: {fileID: 0}
+  m_phaseMenu: {fileID: 0}
+  m_timeLimit: 10
+  m_countdown: 4
+  m_deleteEnemyTime: 1
+  m_enemyMinX: -8
+  m_enemyMaxX: 8
+  m_enemyMinY: -4
+  m_enemyMaxY: 4
+  m_timerText: {fileID: 0}
+  m_timeLimitText: {fileID: 0}
+  m_countdownText: {fileID: 0}
+  m_phaseText: {fileID: 0}
+  m_weatherText: {fileID: 0}
+  m_pocketText: {fileID: 0}
+  m_moneyText: {fileID: 0}
+  m_endText: {fileID: 0}
+  m_startTimer:
+    m_Name: Start Timer
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 61efa234-7d2a-4a1b-bfbb-69df0b3823ed
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  m_nextPhase:
+    m_Name: Next Phase
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 2098e15f-8f3b-4cbc-bf60-5a604a2cecfd
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  m_pause:
+    m_Name: Pause
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: c39b5801-a8d4-4c0f-8d8e-df20bbbd7cfc
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: f8fb2d43-d3d3-46be-85cc-cff72706629e
+      m_Path: <Keyboard>/shift
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Pause
+      m_Flags: 0
+    m_Flags: 0
+--- !u!114 &6062025998857924919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6062025998857924920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba532151f4f8b254ea6380adc7710642, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_pose:
+    m_Name: Pose
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 50e661ca-5f76-4f5b-ab72-1bf1b0e144c6
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: bfd7ad5e-0d9e-464c-8f78-c98a642e4edc
+      m_Path: <Keyboard>/enter
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Pose
+      m_Flags: 0
+    m_Flags: 0

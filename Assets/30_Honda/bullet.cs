@@ -79,12 +79,14 @@ public class bullet : MonoBehaviour
         //testRb.AddForce(moveVec2 * 10, ForceMode2D.Force);
 
 
-        Debug.Log(playerMoveVec);
+        //Debug.Log(playerMoveVec);
         player_rb.velocity = playerMoveVec*speed;//左スティック
 
         // スティックの入力がある場合に発射   Fire1はAボタン
-        if (moveInput.sqrMagnitude > 0.1f && gamepad.leftTrigger.wasPressedThisFrame)
+        if (moveInput.sqrMagnitude > 0.1f &&gamepad.leftTrigger.wasPressedThisFrame)
         {
+            Debug.Log("弾発射");
+
             Shoot(moveInput);
         }
 
@@ -96,6 +98,7 @@ public class bullet : MonoBehaviour
     //弾発射の関数
     private void Shoot(Vector2 aimDirection)    
     {
+        Debug.Log("弾発射");
         
         //if (time > 2.0f)
         {

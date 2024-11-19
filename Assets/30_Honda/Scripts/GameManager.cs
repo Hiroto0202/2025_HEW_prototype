@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
     int m_addMoneyCnt = 0;      // お金を合算した回数
 
     int m_phaseCnt = 0;         // 何フェーズ目かのカウント      
-    MovePlayer m_movePlayer;
+    hitJudge m_hitJudge;
 
 
     // Start is called before the first frame update
@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour
             // UIを表示
             m_timeLimitText.text = m_timeLimit.ToString("TimeLimit:0.00s");      // 制限時間
             m_timerText.text = m_timerElapsedTime.ToString("Timer:0.00s");       // タイマー
-            m_pocketText.text = m_movePlayer.m_pocket.ToString("Pocket:$000000");// 所持金
+            m_pocketText.text = m_hitJudge.m_pocket.ToString("Pocket:$000000");// 所持金
 
 
             // ----- 削除フラグの立っている敵をフェードアウト後に消す ----- //
@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        m_movePlayer = m_player.GetComponent<MovePlayer>();
+        m_hitJudge = m_player.GetComponent<hitJudge>();
         m_pauseFg = false;          // ポーズメニューにしない
         m_buildFg = false;          // ビルドメニューにしない       
         m_timerElapsedTime = 0.0f;  // タイマーの経過時間
@@ -154,7 +154,7 @@ public class GameManager : MonoBehaviour
         m_countdown = 3.0f;         // カウントダウンする秒数
         m_count = 0;                // カウントダウン表示用
         m_addMoneyCnt = 0;          // 合算カウントをリセット
-        m_movePlayer.m_pocket = 0;  // 所持金をリセット
+        m_hitJudge.m_pocket = 0;  // 所持金をリセット
         m_player.transform.position = new Vector3(0.0f, 0.0f, 0.0f);    // 位置をリセット
 
         // 何フェーズ目かによって表示を変更
@@ -187,6 +187,7 @@ public class GameManager : MonoBehaviour
         m_buildMenu.SetActive(false);   // ビルドメニューを非表示
 
         Time.timeScale = 1.0f;          // 時間を進める
+        Debug.Log("Init実行！");
     }
 
     //====================================================
@@ -275,7 +276,7 @@ public class GameManager : MonoBehaviour
                 // 一回のみ
                 if (m_addMoneyCnt == 0)
                 {
-                    m_money += m_movePlayer.m_pocket;    // 所持金をすべての所持金に合算
+                    m_money += m_hitJudge.m_pocket;    // 所持金をすべての所持金に合算
                     ++m_addMoneyCnt;
                 }
                 Time.timeScale = 0.0f;      // 時間を止める

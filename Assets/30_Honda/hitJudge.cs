@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class hitJudge : MonoBehaviour
 {
+    public int m_money = 0;
+    public int m_pocket = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +27,6 @@ public class hitJudge : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        m_pocket++;
     }
 }
