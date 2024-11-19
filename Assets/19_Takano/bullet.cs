@@ -23,17 +23,17 @@ public class bullet : MonoBehaviour
     private Vector2 aimInput; // 入力されたエイムの方向
     public InputAction m_aim;
     private Gamepad gamepad;
-    public float deceleration = 0.98f; // 減速率（調整可能）
+    //public float deceleration = 0.98f; // 減速率（調整可能）
 
 
     [SerializeField] private float time = 0;
 
     void Start()
-    {   
-        testObj = Instantiate(BulletObj);
-        testRb = testObj.GetComponent<Rigidbody2D>();
-        InvokeRepeating("RepeatMethod", 1.0f, 1.0f);
-        player_rb=GetComponent<Rigidbody2D>();
+    {
+        //testObj = Instantiate(BulletObj);
+        //testRb = testObj.GetComponent<Rigidbody2D>();
+        //InvokeRepeating("RepeatMethod", 1.0f, 1.0f);
+        player_rb = GetComponent<Rigidbody2D>();
         time = 2.0f;
 
     }
