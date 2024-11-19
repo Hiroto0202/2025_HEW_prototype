@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using static UnityEngine.GraphicsBuffer;
+using System.Runtime.CompilerServices;
 //using System;
 
 public class GameManager : MonoBehaviour
@@ -60,6 +61,7 @@ public class GameManager : MonoBehaviour
     int m_addMoneyCnt = 0;      // お金を合算した回数
 
     int m_phaseCnt = 0;         // 何フェーズ目かのカウント      
+    MovePlayer m_movePlayer;
 
 
     // Start is called before the first frame update
@@ -105,8 +107,8 @@ public class GameManager : MonoBehaviour
 
             // UIを表示
             m_timeLimitText.text = m_timeLimit.ToString("TimeLimit:0.00s");      // 制限時間
-            m_timerText.text = m_timerElapsedTime.ToString("Timer:0.00s");  // タイマー
-            m_pocketText.text = m_player.GetComponent<MovePlayer>().m_pocket.ToString("Pocket:$000000");  // 所持金
+            m_timerText.text = m_timerElapsedTime.ToString("Timer:0.00s");       // タイマー
+            m_pocketText.text = m_movePlayer.m_pocket.ToString("Pocket:$000000");// 所持金
 
 
             // ----- 削除フラグの立っている敵をフェードアウト後に消す ----- //
@@ -115,7 +117,8 @@ public class GameManager : MonoBehaviour
             // ----- 敵をランダムな位置に作成する処理 ----- //
             if (m_enemyList.Count < m_maxEnemyNum)
             {
-                StartCoroutine(FadeIn());
+                //StartCoroutine(FadeIn());
+                CreateEnemy();
             }
 
             // ----- ポーズ画面の状態切り替え ----- //
@@ -142,6 +145,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        m_movePlayer = m_player.GetComponent<MovePlayer>();
         m_pauseFg = false;          // ポーズメニューにしない
         m_buildFg = false;          // ビルドメニューにしない       
         m_timerElapsedTime = 0.0f;  // タイマーの経過時間
@@ -150,7 +154,7 @@ public class GameManager : MonoBehaviour
         m_countdown = 3.0f;         // カウントダウンする秒数
         m_count = 0;                // カウントダウン表示用
         m_addMoneyCnt = 0;          // 合算カウントをリセット
-        m_player.GetComponent<MovePlayer>().m_pocket = 0;               // 所持金をリセット
+        m_movePlayer.m_pocket = 0;  // 所持金をリセット
         m_player.transform.position = new Vector3(0.0f, 0.0f, 0.0f);    // 位置をリセット
 
         // 何フェーズ目かによって表示を変更
@@ -209,7 +213,11 @@ public class GameManager : MonoBehaviour
             // 敵のスクリプト内の削除フラグが立っている時
             if (m_enemyList[_array].GetComponent<MoveEnemy>().m_deleteFg == true)
             {
-                StartCoroutine(FadeOut(m_enemyList[_array], _array));
+                //StartCoroutine(FadeOut(m_enemyList[_array], _array));
+                //フェードアウト後に敵を削除
+                Destroy(m_enemyList[_array]);
+                m_enemyList.RemoveAt(_array);
+                Debug.Log(_array.ToString() + "番目を削除した");
             }
             m_timerElapsedTime = 0;
         }
@@ -241,7 +249,7 @@ public class GameManager : MonoBehaviour
                 UnityEditor.EditorApplication.isPlaying = false;
                 // ビルド後ならアプリケーションを終了
 #else
-                    Application.Quit();
+    Application.Quit();
 #endif
             }
         }
@@ -267,7 +275,7 @@ public class GameManager : MonoBehaviour
                 // 一回のみ
                 if (m_addMoneyCnt == 0)
                 {
-                    m_money += m_player.GetComponent<MovePlayer>().m_pocket;    // 所持金をすべての所持金に合算
+                    m_money += m_movePlayer.m_pocket;    // 所持金をすべての所持金に合算
                     ++m_addMoneyCnt;
                 }
                 Time.timeScale = 0.0f;      // 時間を止める
@@ -296,58 +304,57 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //====================================================
-    // オブジェクトをフェードインさせるコルーチン
-    //====================================================
-    private IEnumerator FadeIn()
-    {
-        CreateEnemy();
+    ////====================================================
+    //// オブジェクトをフェードインさせるコルーチン
+    ////====================================================
+    //private IEnumerator FadeIn()
+    //{
+    //    CreateEnemy();
 
-        SpriteRenderer _spriteRenderer = m_newEnemy.GetComponent<SpriteRenderer>();
-        Color _spriteColor = _spriteRenderer.color;             // 現在のRGBAを取得
-        _spriteColor.a = 0.0f;                                  // 透明にする
+    //    SpriteRenderer _spriteRenderer = m_newEnemy.GetComponent<SpriteRenderer>();
+    //    Color _spriteColor = _spriteRenderer.color;             // 現在のRGBAを取得
+    //    _spriteColor.a = 0.0f;                                  // 透明にする
 
-        float _duration = 0.5f;                                 // フェードにかける時間
-        float _targetAlpha = 1.0f;                              // 最終のアルファ値
+    //    float _duration = 0.5f;                                 // フェードにかける時間
+    //    float _targetAlpha = 1.0f;                              // 最終のアルファ値
 
-        // 現在のアルファ値が指定された値でない間
-        while (!Mathf.Approximately(_spriteColor.a, _targetAlpha))
-        {
-            float _changeSpeed = Time.deltaTime / _duration;   // 透明度の変化値を求める
+    //    // 現在のアルファ値が指定された値でない間
+    //    while (!Mathf.Approximately(_spriteColor.a, _targetAlpha))
+    //    {
+    //        float _changeSpeed = Time.deltaTime / _duration;   // 透明度の変化値を求める
 
-            // 求めた変化値ごとにアルファ値を変更する
-            _spriteColor.a = Mathf.MoveTowards(_spriteColor.a, _targetAlpha, _changeSpeed);
-            _spriteRenderer.color = _spriteColor;
-            yield return null;
-        }
-    }
+    //        // 求めた変化値ごとにアルファ値を変更する
+    //        _spriteColor.a = Mathf.MoveTowards(_spriteColor.a, _targetAlpha, _changeSpeed);
+    //        _spriteRenderer.color = _spriteColor;
+    //        yield return null;
+    //    }
+    //}
 
-    //====================================================
-    // オブジェクトをフェードアウトさせるコルーチン
-    //====================================================
-    private IEnumerator FadeOut(GameObject _target, int _array)
-    {
-        SpriteRenderer _spriteRenderer = _target.GetComponent<SpriteRenderer>();
-        Color _spriteColor = _spriteRenderer.color;     // 現在のRGBAを取得
-        float _duration = 0.5f;                         // フェードにかける時間
-        float _targetAlpha = 0.0f;                      // 最終のアルファ値
+    ////====================================================
+    //// オブジェクトをフェードアウトさせるコルーチン
+    ////====================================================
+    //private IEnumerator FadeOut(GameObject _target, int _array)
+    //{
+    //    SpriteRenderer _spriteRenderer = _target.GetComponent<SpriteRenderer>();
+    //    Color _spriteColor = _spriteRenderer.color;     // 現在のRGBAを取得
+    //    float _duration = 0.5f;                         // フェードにかける時間
+    //    float _targetAlpha = 0.0f;                      // 最終のアルファ値
 
-        // 現在のアルファ値が指定された値でない間
-        while (!Mathf.Approximately(_spriteColor.a, _targetAlpha))
-        {
-            float _changeSpeed = Time.deltaTime / _duration;   // 透明度の変化値を求める
+    //    // 現在のアルファ値が指定された値でない間
+    //    while (!Mathf.Approximately(_spriteColor.a, _targetAlpha))
+    //    {
+    //        float _changeSpeed = Time.deltaTime / _duration;   // 透明度の変化値を求める
 
-            // 求めた変化値ごとにアルファ値を変更する
-            _spriteColor.a = Mathf.MoveTowards(_spriteColor.a, _targetAlpha, _changeSpeed);
-            _spriteRenderer.color = _spriteColor;
-            yield return null;
-        }
-        // フェードアウト後に敵を削除
-        Destroy(_target);
-        m_enemyList.RemoveAt(_array);
-        Debug.Log(_array.ToString() + "番目を削除した");
-    }
-
+    //        // 求めた変化値ごとにアルファ値を変更する
+    //        _spriteColor.a = Mathf.MoveTowards(_spriteColor.a, _targetAlpha, _changeSpeed);
+    //        _spriteRenderer.color = _spriteColor;
+    //        yield return null;
+    //    }
+    //    // フェードアウト後に敵を削除
+    //    Destroy(_target);
+    //    m_enemyList.RemoveAt(_array);
+    //    Debug.Log(_array.ToString() + "番目を削除した");
+    //}
 
     //====================================================
     // インプットアクション
