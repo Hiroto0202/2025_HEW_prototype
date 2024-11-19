@@ -246,7 +246,7 @@ MonoBehaviour:
   m_moveForward: {x: 0, y: 0}
   m_speed: 0.5
   m_position: {x: 0, y: 0}
-  m_deleteTime: 5
+  m_deleteTime: 2.17
   m_deleteFlg: 0
   m_prefub: {fileID: 377226381374293948, guid: aa842fbe2466cbe45be3a1582a41c8a9, type: 3}
   m_discSize: 5
