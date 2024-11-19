@@ -71,7 +71,10 @@ public class Player : MonoBehaviour
 
         if (m_power > 0)
         {
-            //m_obj.GetComponent<Rigidbody2D>().AddForce(m_move * m_power, ForceMode2D.Impulse);
+            if(m_obj != null)
+            {
+                m_obj.GetComponent<Rigidbody2D>().AddForce(m_move * m_power, ForceMode2D.Impulse);
+            }
 
             m_power -= 0.005f;
         }

@@ -31,6 +31,10 @@ public class Discover : MonoBehaviour
         {
             m_battleflg = true;
         }
+        if(col.transform.tag =="Enemy")
+        {
+            //Destroy
+        }
     }
 
 }
