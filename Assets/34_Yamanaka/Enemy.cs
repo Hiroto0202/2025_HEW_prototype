@@ -80,7 +80,6 @@ public class Enemy : MonoBehaviour
         // 経過時間を取得
         m_elapsedTime += Time.deltaTime;
 
-
         //フェードイン
         if (m_spriteColor.a < m_targetAlpha)
         {
